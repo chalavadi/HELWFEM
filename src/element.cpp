@@ -272,7 +272,7 @@ mat Q4::stiffness(int planeState = PSTRESS)
         for (j = 0; j < Q4::numPointsY; j++) 
         {
             eta = Q4::gaussPoints[j];
-            weightY = Q4::gaussPoints[j];
+            weightY = Q4::weights[j];
             jacobian = J(xi, eta);
             invJac = inv(jacobian);
             for (k = 0; k < Q4__DOF_PER_NODE; k++)
