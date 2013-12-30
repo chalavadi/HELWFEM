@@ -18,13 +18,13 @@ public:
     virtual void traction(vec*) =0;
     virtual void stiffness(mat*, int) =0;
 //protected:
+    // @todo rewrite this with accessors and mutators
     int E, v;
     vec *pb, *pt;
     mat *pgcoords;
     int *gnodes;
     int *gdof;
     virtual mat N(double, double) =0;
-    
 };
 
 

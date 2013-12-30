@@ -6,7 +6,7 @@
 
 using namespace arma;
 
-void globalStiffness(mat*, MechElem*, unsigned int, unsigned int, int);
+void globalStiffness(mat*, MechElem**, unsigned int, unsigned int, int);
 
 #endif	/* ASSEMBLY_H */
 
