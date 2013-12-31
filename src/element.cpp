@@ -1,6 +1,9 @@
 #include "element.h"
 #include <armadillo>
 
+//#define NDEBUG 1
+#include <cassert>
+
 using namespace arma;
 
 // @todo let's store material properties in a struct or an instance and only keep a reference to it
@@ -188,6 +191,8 @@ mat Q4::J(double xi, double eta)
  */
 void Q4::bodyForce(vec &bodyForce)
 {
+    assert(bodyForce.n_rows == Q4__DOF_PER_NODE*Q4__NUM_NODES);
+    // @todo make zeros at or not at the beg of function consistent across functions
     bodyForce.zeros();
     unsigned int i, j;
     double xi, eta, weightX, weightY;
@@ -202,7 +207,7 @@ void Q4::bodyForce(vec &bodyForce)
         for (j = 0; j < Q4::numPointsY; j++) 
         {
             eta = Q4::gaussPoints[j];
-            weightY = Q4::gaussPoints[j];
+            weightY = Q4::weights[j];
             bodyForce += weightX * weightY * trans(N(xi, eta)) * *pb 
                     * det(J(xi, eta));
         }
@@ -252,6 +257,9 @@ void Q4::traction(vec &traction)
  */
 void Q4::stiffness(mat &stiff, int pState = PSTRESS) 
 {
+    assert(stiff.n_rows == Q4__DOF_PER_NODE*Q4__NUM_NODES);
+    assert(stiff.n_cols == Q4__DOF_PER_NODE*Q4__NUM_NODES);
+    
     stiff.zeros();
     Mat<int>::fixed<3,4> e;
     e << 1 << 0 << 0 << 0 << endr
@@ -288,7 +296,8 @@ void Q4::stiffness(mat &stiff, int pState = PSTRESS)
             break;
         default:
             // @todo: IDK, FIX THIS I GUESS
-            cout << "YOU DID SOMETHING STUPID" << endl;
+            cout << "Cannot understand plane state" << endl;
+            assert(0);
     }
     
     /*

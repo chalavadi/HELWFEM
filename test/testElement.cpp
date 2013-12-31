@@ -294,6 +294,57 @@ TEST_F(Q4Test, GlobalStiffness)
             EXPECT_DOUBLE_EQ(ke2(i-6,j-6), kg(i,j));
 }
 
+TEST_F(Q4Test, ElementBodyForce)
+{
+    vec expBodyForce(8);
+    expBodyForce << 0
+                 << -61250
+                 << 0
+                 << -61250
+                 << 0
+                 << -61250
+                 << 0
+                 << -61250;
+    vec actBodyForce(8, fill::zeros);
+    elem.bodyForce(actBodyForce);
+    for (int i = 0; i < 8; i++)
+        EXPECT_DOUBLE_EQ(expBodyForce(i),actBodyForce(i));
+    elem2.bodyForce(actBodyForce);
+    for (int i = 0; i < 8; i++)
+        EXPECT_DOUBLE_EQ(expBodyForce(i),actBodyForce(i));
+    
+    std::cout << std::endl << "Element body force" << std::endl
+         << "----------------------------------------" << std::endl
+         << actBodyForce << std::endl;
+}
+
+TEST_F(Q4Test, GlobalBodyForce)
+{
+    vec expBodyForce(12);
+    expBodyForce << 0
+                 << -61250
+                 << 0
+                 << -61250*2
+                 << 0
+                 << -61250
+                 << 0
+                 << -61250
+                 << 0
+                 << -61250*2
+                 << 0
+                 << -61250;
+    vec actBodyForce(12, fill::zeros), be1(8, fill::zeros), be2(8, fill::zeros);
+    elem.bodyForce(be1);
+    elem2.bodyForce(be2);
+    MechElem *pElems[2] = {&elem, &elem2};
+    globalBodyForce(actBodyForce, pElems, 2, 8);
+    for (int i = 0; i < 12; i++)
+        EXPECT_DOUBLE_EQ(expBodyForce(i),actBodyForce(i));
+    std::cout << std::endl << "Global body force" << std::endl
+         << "----------------------------------------" << std::endl
+         << actBodyForce << std::endl;
+}
+
 }  // namespace
 
 int main(int argc, char **argv) {

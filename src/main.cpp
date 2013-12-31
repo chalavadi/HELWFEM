@@ -17,6 +17,7 @@ int main(int argc, char** argv)
   vec t(2);
   t << 0 << endr
     << 0 << endr;
+  vec be1(8,1,fill::zeros), be2(8,1,fill::zeros);
   int gnodes[] = {1, 2, 5, 4};
   mat gcoords(4,2);
   gcoords << 0 << 0 << endr
@@ -52,15 +53,30 @@ int main(int argc, char** argv)
   int numElem = 2;
   globalStiffness(kg, pelems, numElem, Q4__DOF_PER_NODE*Q4__NUM_NODES, PSTRESS);
   
-  cout << "Element 1" << endl
+  cout << "Element Stiffness 1" << endl
        << "-------------" << endl
        << ke << endl
-       << "Element 2" << endl
+       << "Element Stiffness 2" << endl
        << "-------------" << endl
        << ke2 << endl
-       << "Global" << endl
+       << "Global Stiffness" << endl
        << "-------------" << endl
        << kg << endl;
+  
+  elem->bodyForce(be1);
+  elem2->bodyForce(be2);
+  
+  vec bg(12);
+  globalBodyForce(bg, pelems, numElem, Q4__DOF_PER_NODE*Q4__NUM_NODES);
+  
+  cout << endl << "Body Force 1" << endl
+       << "-------------" << endl
+       << be1 << endl
+       << "-------------" << endl
+       << "Body Force 2" << endl
+       << be2 << endl
+       << "Global Body Force" << endl
+       << bg << endl;
 
   delete elem;
   delete elem2;
