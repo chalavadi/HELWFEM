@@ -14,9 +14,10 @@ using namespace std;
  * @param [unsigned int] dofPerElem Total degrees of freedom per element
  * @return void
  */
-void globalStiffness(mat *kg, MechElem **elems, unsigned int numElements,
-        unsigned int dofPerElem, int planeState)
+void globalStiffness(mat &kg, MechElem **elems, unsigned int numElements,
+        unsigned int dofPerElem, int pState)
 {
+    int *gdofs;
     cout << "DOF PER ELEM: " << dofPerElem << " num elem: " << numElements << endl;
     unsigned int elemNum, i, j;
     MechElem *pElem;
@@ -26,17 +27,18 @@ void globalStiffness(mat *kg, MechElem **elems, unsigned int numElements,
         cout << "element: " << elemNum << endl;
         pElem = elems[elemNum];
         cout << pElem << endl;
-        pElem->stiffness(ke, planeState);
+        gdofs = pElem->getGdofs();
+        pElem->stiffness(*ke, pState);
         for (i = 0; i < dofPerElem; i++)
-            cout << pElem->gdof[i] << endl;
+            cout << gdofs[i] << endl;
         cout << *ke << endl;
         for (i = 0; i < dofPerElem; i++)
         {
             for (j = 0; j < dofPerElem; j++)
             {
-                cout << i << " " << j << endl << *kg << endl;
-                cout << pElem->gdof[i] << " " << pElem->gdof[j] << endl;
-                (*kg)(pElem->gdof[i], pElem->gdof[j]) += (*ke)(i, j);
+                cout << i << " " << j << endl << kg << endl;
+                cout << gdofs[i] << " " << gdofs[j] << endl;
+                kg(gdofs[i], gdofs[j]) += (*ke)(i, j);
             }
         }
     }

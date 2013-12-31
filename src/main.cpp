@@ -23,10 +23,11 @@ int main(int argc, char** argv)
           << 5 << 0 << endr
           << 5 << 5 << endr
           << 0 << 5 << endr;
-  int gdof[] = {1, 2, 3, 4, 9, 10, 7, 8};
+  int gdofs[] = {1, 2, 3, 4, 9, 10, 7, 8};
   
-  Q4 *elem = new Q4(E, v, h, &b, &t, gnodes, &gcoords, gdof);
+  Q4 *elem = new Q4(E, v, h, &b, &t, gnodes, &gcoords, gdofs);
   
+  /*
   int gnodes2[] = {2, 3, 6, 5};
   mat gcoords2(4,2);
   gcoords2 << 0 << 0 << endr
@@ -62,7 +63,23 @@ int main(int argc, char** argv)
        << "Global" << endl
        << "-------------" << endl
        << kg << endl;
+  */
   
+  mat *pgcoords;
+  pgcoords = elem->getGcoords();
+  
+  cout << *pgcoords << endl;
+  
+  int *new_nodes;
+  new_nodes = elem->getGnodes();
+  for (int i = 0; i < 4; i++)
+      cout << new_nodes[i] << endl;
+  
+  int *new_gdof;
+  new_gdof = elem->getGdofs();
+  for (int i = 0; i < 8; i++)
+      cout << new_gdof[i] << endl;
+
   delete elem;
   
   return 0;

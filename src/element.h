@@ -8,23 +8,24 @@ using namespace arma;
 class MechElem {
 public:
     MechElem();
-    MechElem(int, float, vec*, vec*, int*, mat*, int*);
-    MechElem(const MechElem& orig);
+    MechElem(int, double, vec*, vec*, int*, mat*, int*);
+    MechElem(const MechElem &orig);
     virtual ~MechElem();
-    virtual vec bodyForce(void) =0;
-    virtual vec traction(void) =0;
-    virtual mat stiffness(int) =0;
-    virtual void bodyForce(vec*) =0;
-    virtual void traction(vec*) =0;
-    virtual void stiffness(mat*, int) =0;
-//protected:
-    // @todo rewrite this with accessors and mutators
-    int E, v;
+    virtual void bodyForce(vec&) =0;
+    virtual void traction(vec&) =0;
+    virtual void stiffness(mat&, int) =0;
+    mat *getGcoords();
+    int *getGdofs();
+    int *getGnodes();
+protected:
+    int E;
+    double v;
     vec *pb, *pt;
     mat *pgcoords;
     int *gnodes;
-    int *gdof;
+    int *gdofs;
     virtual mat N(double, double) =0;
+    virtual mat J(double, double) =0;
 };
 
 
@@ -42,47 +43,42 @@ enum PlaneState { PSTRESS, PSTRAIN };
 // @todo rewrite to better encapsulate and protect member data
 class Q4 : public MechElem {
 private:
-    static unsigned int const numPointsX = 2;
-    static unsigned int const numPointsY = 2;
-    static double const gaussPoints[];
-    static int const weights[];
-    static unsigned int const totalDOF = Q4__NUM_NODES*Q4__DOF_PER_NODE;
+    static const unsigned int numPointsX = 2;
+    static const unsigned int numPointsY = 2;
+    static const double gaussPoints[];
+    static const int weights[];
+    static const unsigned int totalDOF = Q4__NUM_NODES*Q4__DOF_PER_NODE;
+protected:
+    double h;
+    mat N(double, double);
+    mat J(double, double);
 public:
     Q4();
     Q4(int, double, double, vec*, vec*, int*, mat*, int*);
-    int E;
-    double v, h;
-    vec *pb, *pt;
-    mat *pgcoords;
-    int *gnodes;
-    int *gdof;
-    mat N(double, double);
-    mat J(double, double);
-    vec bodyForce(void);
-    vec traction(void);
-    mat stiffness(int);
-    void bodyForce(vec*);
-    void traction(vec*);
-    void stiffness(mat*, int);
+    Q4(const Q4 &orig);
+    virtual ~Q4();
+    void bodyForce(vec&);
+    void traction(vec&);
+    void stiffness(mat&, int);
 };
 
-class Q4R : public Q4 {
+class Q4R : public MechElem {
 private:
-    static unsigned int const xi = 0;
-    static unsigned int const eta = 0;
-    static int const weight = 2;    
-public:
-    Q4R(int, float, vec*, vec*, int*, mat, int*);
-    int E, v;
-    vec *pb, *pt;
-    mat *pgcoords;
-    int gnodes[Q4__NUM_NODES];
-    int gdof[Q4__NUM_NODES*Q4__DOF_PER_NODE];
+    static const unsigned int xi = 0;
+    static const unsigned int eta = 0;
+    static const int weight = 2;
+protected:
+    double h;
     mat N(double, double);
-    mat J(double, double);
-    vec bodyForce(void);
-    vec traction(void);
-    mat stiffness(bool);
+    mat J(double, double);    
+public:
+    Q4R();
+    Q4R(int, double, double, vec*, vec*, int*, mat*, int*);
+    Q4R(const Q4 &orig);
+    virtual ~Q4R();
+    void bodyForce(vec&);
+    void traction(vec&);
+    void stiffness(mat&, int);
 };
 
 #endif	/* ELEMENT_H */
