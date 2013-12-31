@@ -40,7 +40,6 @@ enum PlaneState { PSTRESS, PSTRAIN };
 #define Q4__NUM_NODES 4
 #define Q4__DOF_PER_NODE 2
 
-// @todo rewrite to better encapsulate and protect member data
 class Q4 : public MechElem {
 private:
     static const unsigned int numPointsX = 2;
@@ -69,6 +68,7 @@ private:
     static const int weight = 2;
 protected:
     double h;
+    // @todo create N1, N2, N3, N4, dN1_dxi, etc., inline functions?
     mat N(double, double);
     mat J(double, double);    
 public:

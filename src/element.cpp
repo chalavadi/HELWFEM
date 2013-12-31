@@ -4,6 +4,8 @@
 using namespace arma;
 
 // @todo let's store material properties in a struct or an instance and only keep a reference to it
+// @todo most matrices we can make a fixed, static size. implement this for better performance
+// @todo consider a more flyweight approach... how much can we slim down cost of creating an element?
 
 /**
  * Default constructor for a mechanical finite element
@@ -120,6 +122,7 @@ Q4::~Q4(void)
 {
 }
 
+// consider inline functions?
 /*
  * Define the Q4 shape functions
  */
@@ -250,7 +253,7 @@ void Q4::traction(vec &traction)
 void Q4::stiffness(mat &stiff, int pState = PSTRESS) 
 {
     stiff.zeros();
-    Mat<int> e(3,4);
+    Mat<int>::fixed<3,4> e;
     e << 1 << 0 << 0 << 0 << endr
       << 0 << 0 << 0 << 1 << endr
       << 0 << 1 << 1 << 0 << endr;

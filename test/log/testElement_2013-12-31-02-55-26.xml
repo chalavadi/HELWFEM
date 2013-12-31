@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="5" failures="0" disabled="0" errors="0" timestamp="2013-12-31T02:55:26" time="0.004" name="AllTests">
+  <testsuite name="Q4Test" tests="5" failures="0" disabled="0" errors="0" time="0.004">
+    <testcase name="Gcoords" status="run" time="0" classname="Q4Test" />
+    <testcase name="Gnodes" status="run" time="0" classname="Q4Test" />
+    <testcase name="Gdofs" status="run" time="0.001" classname="Q4Test" />
+    <testcase name="ElementStiffnessMatrix" status="run" time="0.002" classname="Q4Test" />
+    <testcase name="GlobalStiffness" status="run" time="0" classname="Q4Test" />
+  </testsuite>
+</testsuites>

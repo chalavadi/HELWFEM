@@ -17,28 +17,26 @@ using namespace std;
 void globalStiffness(mat &kg, MechElem **elems, unsigned int numElements,
         unsigned int dofPerElem, int pState)
 {
+    /*
+     * @todo reach a consistency where matrices passed by reference are either \
+     * assumed to be zeroed before being passed or are zeroed on pass
+     */
     int *gdofs;
-    cout << "DOF PER ELEM: " << dofPerElem << " num elem: " << numElements << endl;
     unsigned int elemNum, i, j;
     MechElem *pElem;
     mat *ke = new mat(dofPerElem, dofPerElem);
     for (elemNum = 0; elemNum < numElements; elemNum++)
     {
-        cout << "element: " << elemNum << endl;
         pElem = elems[elemNum];
-        cout << pElem << endl;
         gdofs = pElem->getGdofs();
         pElem->stiffness(*ke, pState);
-        for (i = 0; i < dofPerElem; i++)
-            cout << gdofs[i] << endl;
-        cout << *ke << endl;
         for (i = 0; i < dofPerElem; i++)
         {
             for (j = 0; j < dofPerElem; j++)
             {
-                cout << i << " " << j << endl << kg << endl;
-                cout << gdofs[i] << " " << gdofs[j] << endl;
-                kg(gdofs[i], gdofs[j]) += (*ke)(i, j);
+                // @todo consider renumbering DOF so that we no longer require \
+                // this silly minus one business
+                kg(gdofs[i]-1, gdofs[j]-1) += (*ke)(i, j);
             }
         }
     }

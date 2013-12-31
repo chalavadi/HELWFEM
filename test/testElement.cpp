@@ -1,5 +1,6 @@
 #include "gtest/include/gtest/gtest.h"
 #include "../src/element.h"
+#include "../src/assembly.h"
 #include <time.h>
 #include <iostream>
 #include <cstdlib>
@@ -12,6 +13,7 @@ using namespace arma;
 
 namespace {
 
+// Define test fixtures
 class Q4Test : public ::testing::Test 
 {
 protected:
@@ -74,6 +76,19 @@ protected:
     Q4 elem, elem2;
 };
 
+/**
+ * Test preprocessor shape functions
+ */
+/* NOT AVAILABLE BECAUSE SHAPE FUNCTIONS ARE DEFINED IN .CPP FILE.
+ * CONSIDER MOVING THEM TO HEADER FILE
+TEST(Q4Test, ShapeFunctions)
+{
+}
+*/
+
+/**
+ * Test the getGcoords method for functionality and polymorphism
+ */
 TEST_F(Q4Test, Gcoords)
 {
     int i, j;
@@ -103,6 +118,9 @@ TEST_F(Q4Test, Gcoords)
             ASSERT_EQ(gcoords2(i,j), (*actgcoords)(i,j));
 }
 
+/**
+ * Test the getGnodes method for functionality and polymorphism
+ */
 TEST_F(Q4Test, Gnodes)
 {
     int i, expgnodes[4], *actgnodes;
@@ -129,6 +147,9 @@ TEST_F(Q4Test, Gnodes)
         ASSERT_EQ(gnodes2[i], actgnodes[i]);
 }
 
+/**
+ * Test the getGdofs method for functionality and polymorphism
+ */
 TEST_F(Q4Test, Gdofs)
 {
     int i, expgdofs[8], *actgdofs;
@@ -160,6 +181,9 @@ TEST_F(Q4Test, Gdofs)
         ASSERT_EQ(gdofs2[i], actgdofs[i]);
 }
 
+/**
+ * Test the stiffness method against values computed in other programs
+ */
 TEST_F(Q4Test, ElementStiffnessMatrix)
 {
     int i, j;
@@ -227,6 +251,47 @@ TEST_F(Q4Test, ElementStiffnessMatrix)
         for (j = 0; j < 8; j++)
             EXPECT_NEAR(expStiffness(i,j), actStiffness(i,j), 
                     abs(expStiffness(i,j)/100));
+}
+
+TEST_F(Q4Test, GlobalStiffness)
+{
+    mat ke1(8,8,fill::zeros), ke2(8,8,fill::zeros);
+    mat kg(12,12,fill::zeros);
+    
+    elem.stiffness(ke1, PSTRESS);
+    elem2.stiffness(ke2, PSTRESS);
+    
+    MechElem *pElems[2] = {&elem, &elem2};
+    
+    globalStiffness(kg, pElems, 2, 8, PSTRESS);
+    
+    std::cout << std::endl << "Global stiffness matrix" << std::endl
+         << "----------------------------------------" << std::endl
+         << kg << std::endl;
+    
+    for (int i = 0; i < 2; i++)
+        for (int j = 0; j < 2; j++)
+            EXPECT_DOUBLE_EQ(ke1(i,j), kg(i,j));
+    
+    for (int i = 2; i < 4; i++)
+        for (int j = 2; j < 4; j++)
+            EXPECT_DOUBLE_EQ(ke1(i,j)+ke2(i-2,j-2), kg(i,j));
+    
+    for (int i = 4; i < 6; i++)
+        for (int j = 4; j < 6; j++)
+            EXPECT_DOUBLE_EQ(ke2(i-2,j-2), kg(i,j));
+    
+    for (int i = 6; i < 8; i++)
+        for (int j = 6; j < 8; j++)
+            EXPECT_DOUBLE_EQ(ke1(i,j), kg(i,j));
+    
+    for (int i = 8; i < 10; i++)
+        for (int j = 8; j < 10; j++)
+            EXPECT_DOUBLE_EQ(ke1(i-4,j-4)+ke2(i-2,j-2),kg(i,j));
+    
+    for (int i = 10; i < 12; i++)
+        for (int j = 10; j < 12; j++)
+            EXPECT_DOUBLE_EQ(ke2(i-6,j-6), kg(i,j));
 }
 
 }  // namespace
