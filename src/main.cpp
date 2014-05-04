@@ -17,7 +17,10 @@ int main(int argc, char** argv)
   vec t(2);
   t << 0 << endr
     << 0 << endr;
-  vec be1(8,1,fill::zeros), be2(8,1,fill::zeros);
+    
+  vec be1 = zeros<colvec>(8);
+  vec be2 = zeros<colvec>(8);
+  
   int gnodes[] = {1, 2, 5, 4};
   mat gcoords(4,2);
   gcoords << 0 << 0 << endr
@@ -48,7 +51,7 @@ int main(int argc, char** argv)
   pelems[0] = elem;
   pelems[1] = elem2;
   
-  mat kg(12, 12, fill::zeros);
+  mat kg = zeros<mat>(12, 12);
   
   int numElem = 2;
   globalStiffness(kg, pelems, numElem, Q4__DOF_PER_NODE*Q4__NUM_NODES, PSTRESS);

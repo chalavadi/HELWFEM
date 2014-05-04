@@ -267,14 +267,14 @@ void Q4::stiffness(mat &stiff, int pState = PSTRESS)
       << 0 << 1 << 1 << 0 << endr;
     unsigned int i, j, k, m;
     double xi, eta, weightX, weightY, temp;
-    mat nStar(Q4__DOF_PER_NODE*Q4__DOF_PER_NODE,Q4__DOF_PER_NODE*
-                Q4__NUM_NODES, fill::zeros);
+    mat nStar = zeros<mat>(Q4__DOF_PER_NODE*Q4__DOF_PER_NODE,Q4__DOF_PER_NODE*
+                Q4__NUM_NODES);
     mat jacobian(Q4__DOF_PER_NODE*Q4__DOF_PER_NODE,
             Q4__DOF_PER_NODE*Q4__DOF_PER_NODE);
     mat invJac(Q4__DOF_PER_NODE*Q4__DOF_PER_NODE,
             Q4__DOF_PER_NODE*Q4__DOF_PER_NODE);
-    mat JE(Q4__DOF_PER_NODE*Q4__DOF_PER_NODE,Q4__DOF_PER_NODE*Q4__DOF_PER_NODE,
-            fill::zeros);
+    mat JE = zeros<mat>(Q4__DOF_PER_NODE*Q4__DOF_PER_NODE,
+        Q4__DOF_PER_NODE*Q4__DOF_PER_NODE);
     mat B(Q4__STRAIN_COMP,Q4__DOF_PER_NODE*Q4__NUM_NODES);
     mat C(Q4__STRAIN_COMP,Q4__STRAIN_COMP);
     
