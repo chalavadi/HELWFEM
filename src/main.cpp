@@ -17,6 +17,7 @@ using namespace arma;
 
 int main(int argc, char** argv)
 {
+  cout << "Program launched." << endl;
   int i;
 
   /* initialize model data */
@@ -42,6 +43,8 @@ int main(int argc, char** argv)
   bounds.push_front(new BC(5, 0));
   
   /* mesh */
+  cout << "Creating mesh..." << endl;
+  
   const int numElem = 2;
   const int numNodes = 6;
   
@@ -64,6 +67,8 @@ int main(int argc, char** argv)
   Q4 *elem2 = new Q4(E, v, h, &b, &t, gnodes2, &gcoords2, gdof2);
   
   /* calculate element stiffnesses and assemble */
+  cout << "Analyzing discretized system..." << endl;
+  
   MechElem *pelems[numElem] = {elem, elem2};
   
   mat kg = zeros<mat>(Q4__DOF_PER_NODE*numNodes, Q4__DOF_PER_NODE*numNodes);
@@ -81,8 +86,9 @@ int main(int argc, char** argv)
   
   /* assemble global force vector */
   vec fg = zeros<vec>(Q4__DOF_PER_NODE*numNodes);
-  fg(6) = 10e3;
-  fg(9) = -10e3;
+  fg(4) = 10.e3;
+  fg(7) = -10.e3;
+  fg(9) = -10.e3;
   for (i = 0; i < Q4__DOF_PER_NODE*numNodes; i++)
     fg(i) += bg(i);
     
@@ -90,9 +96,11 @@ int main(int argc, char** argv)
        << fg << endl;
     
   /* impose boundary condtions */
+  cout << endl << "Imposing boundary conditions..." << endl;
   mimposeBoundaryConds(kg, fg, bounds);
   
   /* solve for displacements */
+  cout << "Solving for displacements..." << endl;
   vec ug = zeros<vec>(Q4__DOF_PER_NODE*numNodes);
   if (!solve(ug, kg, fg))
   {
@@ -102,14 +110,15 @@ int main(int argc, char** argv)
   
   /* display answer */
   cout << endl << "================================" << endl;
-  cout << endl << "Modified Global Stiffness Matrix" << endl
+  cout << endl << "Modified Global Stiffness Matrix (by imposing EBCs)" << endl
        << kg << endl;
-  cout << endl << "Modified Global Force" << endl
+  cout << endl << "Modified Global Force (by imposing EBCs)" << endl
        << fg << endl;
   cout << endl << "Global Displacements" << endl
        << ug << endl;
 
   /* clean up dynamic memory */
+  cout << endl << "Cleaning up allocated memory..." << endl;
   for (BC *pbc : bounds) delete pbc;
   delete elem;
   delete elem2;

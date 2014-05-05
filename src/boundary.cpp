@@ -1,6 +1,7 @@
 #include <list>
-#include <cassert>
 
+//#define NDEBUG 1
+#include <cassert>
 #include "boundary.h"
 
 /**
@@ -26,8 +27,13 @@ void mimposeBoundaryConds(mat &kg, vec &fg, const std::list<BC*> &bounds)
                 kg(i, bc->dof) = 1;
                 continue;
             }
-            fg(i) -= kg(i, bc->dof) * bc->val;
+            /* modify force vector with known products */
+            fg(i) -= kg(i, bc->dof) * bc->val - kg(bc->dof, i) * bc->val;
+            /* zero off-diagonals */
             kg(i, bc->dof) = 0;
+            kg(bc->dof, i) = 0;
         }
+        /* modify force vector with known displacements */
+        fg(bc->dof) = bc->val;
     }
 }
