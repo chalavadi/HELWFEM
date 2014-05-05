@@ -6,8 +6,8 @@
 
 using namespace arma;
 
-void globalStiffness(mat&, MechElem**, unsigned int, unsigned int, int);
-void globalBodyForce(vec&, MechElem**, unsigned int, unsigned int);
+void mglobalStiffness(mat&, MechElem**, unsigned int, unsigned int, int);
+void mglobalBodyForce(vec&, MechElem**, unsigned int, unsigned int);
 
 #endif	/* ASSEMBLY_H */
 

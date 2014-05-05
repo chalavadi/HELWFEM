@@ -9,8 +9,11 @@
 using namespace arma;
 using namespace std;
 
+//TODO work with linked lists instead of C-style arrays
+// this will be easier for memory management
+
 /**
- * Assembles the global stiffness matrix given an array of elements
+ * Assembles the global stiffness matrix given an array of elements, mutator
  * 
  * @param [mat] kg Global stiffness matrix (by reference)
  * @param [MechElem*] elems Array of pointers to elements to assemble
@@ -18,14 +21,14 @@ using namespace std;
  * @param [unsigned int] dofPerElem Total degrees of freedom per element
  * @return void
  */
-void globalStiffness(mat &kg, MechElem **elems, unsigned int numElements,
+void mglobalStiffness(mat &kg, MechElem **elems, unsigned int numElements,
         unsigned int dofPerElem, int pState)
 {
-    // @todo Can we find a way to relate this to global dof??
+    // TODO Can we find a way to relate this to global dof??
     //assert(kg.n_cols == dofPerElem);
     //assert(kg.n_rows == dofPerElem);
     /*
-     * @todo reach a consistency where matrices passed by reference are either \
+     * TODO reach a consistency where matrices passed by reference are either \
      * assumed to be zeroed before being passed or are zeroed on pass
      */
     kg.zeros();
@@ -37,12 +40,12 @@ void globalStiffness(mat &kg, MechElem **elems, unsigned int numElements,
     {
         pElem = elems[elemNum];
         gdofs = pElem->getGdofs();
-        pElem->stiffness(*ke, pState);
+        pElem->mstiffness(*ke, pState);
         for (i = 0; i < dofPerElem; i++)
         {
             for (j = 0; j < dofPerElem; j++)
             {
-                // @todo consider renumbering DOF so that we no longer require
+                // TODO consider renumbering DOF so that we no longer require
                 // this silly minus one business
                 kg(gdofs[i]-1, gdofs[j]-1) += (*ke)(i, j);
             }
@@ -53,7 +56,7 @@ void globalStiffness(mat &kg, MechElem **elems, unsigned int numElements,
 }
 
 /**
- * Assembles the global body force vector given an array of elements
+ * Assembles the global body force vector given an array of elements, mutator
  * 
  * @param [mat] bg Global body force vector (by reference)
  * @param [MechElem*] elems Array of pointers to elements to assemble
@@ -61,10 +64,10 @@ void globalStiffness(mat &kg, MechElem **elems, unsigned int numElements,
  * @param [unsigned int] dofPerElem Total degrees of freedom per element
  * @return void
  */
-void globalBodyForce(vec &bg, MechElem **elems, unsigned int numElements,
+void mglobalBodyForce(vec &bg, MechElem **elems, unsigned int numElements,
         unsigned int dofPerElem)
 {
-    // @todo Can we write this for global degrees of freedom?
+    // TODO Can we write this for global degrees of freedom?
     //assert(bg.n_cols == dofPerElem);
     
     bg.zeros();
@@ -76,7 +79,7 @@ void globalBodyForce(vec &bg, MechElem **elems, unsigned int numElements,
     {
         pElem = elems[elemNum];
         gdofs = pElem->getGdofs();
-        pElem->bodyForce(*be);
+        pElem->mbodyForce(*be);
         for (i = 0; i < dofPerElem; i++)
             bg(gdofs[i]-1) += (*be)(i);
     }

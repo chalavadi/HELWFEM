@@ -8,17 +8,17 @@ using namespace arma;
 class MechElem {
 public:
     MechElem();
-    MechElem(int, double, vec*, vec*, int*, mat*, int*);
+    MechElem(long long int, double, vec*, vec*, int*, mat*, int*);
     MechElem(const MechElem &orig);
     virtual ~MechElem();
-    virtual void bodyForce(vec&) =0;
-    virtual void traction(vec&) =0;
-    virtual void stiffness(mat&, int) =0;
+    virtual void mbodyForce(vec&) =0;
+    virtual void mtraction(vec&) =0;
+    virtual void mstiffness(mat&, int) =0;
     mat *getGcoords();
     int *getGdofs();
     int *getGnodes();
 protected:
-    int E;
+    long long int E;
     double v;
     vec *pb, *pt;
     mat *pgcoords;
@@ -53,12 +53,12 @@ protected:
     mat J(double, double);
 public:
     Q4();
-    Q4(int, double, double, vec*, vec*, int*, mat*, int*);
+    Q4(long long int, double, double, vec*, vec*, int*, mat*, int*);
     Q4(const Q4 &orig);
     virtual ~Q4();
-    void bodyForce(vec&);
-    void traction(vec&);
-    void stiffness(mat&, int);
+    void mbodyForce(vec&);
+    void mtraction(vec&);
+    void mstiffness(mat&, int);
 };
 
 class Q4R : public MechElem {
@@ -76,9 +76,9 @@ public:
     Q4R(int, double, double, vec*, vec*, int*, mat*, int*);
     Q4R(const Q4 &orig);
     virtual ~Q4R();
-    void bodyForce(vec&);
-    void traction(vec&);
-    void stiffness(mat&, int);
+    void mbodyForce(vec&);
+    void mtraction(vec&);
+    void mstiffness(mat&, int);
 };
 
 #endif	/* ELEMENT_H */

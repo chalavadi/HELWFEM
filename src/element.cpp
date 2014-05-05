@@ -6,9 +6,12 @@
 
 using namespace arma;
 
-// @todo let's store material properties in a struct or an instance and only keep a reference to it
-// @todo most matrices we can make a fixed, static size. implement this for better performance
-// @todo consider a more flyweight approach... how much can we slim down cost of creating an element?
+// TODO let's store material properties in a struct or an instance and only keep a reference to it
+// TODO most matrices we can make a fixed, static size. implement this for better performance
+// TODO consider a more flyweight approach... how much can we slim down cost of creating an element?
+// TODO convert c style arrays to c++ arrays
+// TODO separate material data from mesh data
+// TODO convert for loops to ranged loops
 
 /**
  * Default constructor for a mechanical finite element
@@ -29,7 +32,7 @@ MechElem::MechElem() {}
  * @param [int*] gdof Global degrees of freedom
  * @return MechElem
  */
-MechElem::MechElem(int E, double v, vec *pb, vec *pt, int *gnodes, 
+MechElem::MechElem(long long int E, double v, vec *pb, vec *pt, int *gnodes, 
         mat *pgcoords, int *gdofs) : E(E), v(v), pb(pb), pt(pt), 
         gnodes(gnodes), pgcoords(pgcoords), gdofs(gdofs) {};
 
@@ -87,7 +90,7 @@ int const Q4::weights[] = { 1, 1 };
  */
 Q4::Q4() {}
 
-// @todo: consider separating material data from element object
+// TODO: consider separating material data from element object
 
 /**
  * Constructor for a Q4 finite element
@@ -102,8 +105,9 @@ Q4::Q4() {}
  * @param [int*] gdof Global degrees of freedom
  * @return Q4
  */
-Q4::Q4(int E, double v, double h, vec *pb, vec *pt, int *gnodes, mat *pgcoords, 
-        int *gdofs) : MechElem(E, v, pb, pt, gnodes, pgcoords, gdofs), h(h) {};
+Q4::Q4(long long int E, double v, double h, vec *pb, vec *pt, int *gnodes, 
+    mat *pgcoords, int *gdofs) : MechElem(E, v, pb, pt, gnodes, pgcoords, 
+    gdofs), h(h) {};
 
 /**
  * Clone of a Q4 finite element
@@ -111,9 +115,10 @@ Q4::Q4(int E, double v, double h, vec *pb, vec *pt, int *gnodes, mat *pgcoords,
  * @param [int] 
  * @return Q4
  */
+ /*
 Q4::Q4(const Q4& orig) 
 {
-}
+}*/
 
 /**
  * Deallocation of a Q4 finite element
@@ -181,18 +186,18 @@ mat Q4::J(double xi, double eta)
     return jacobian;
 }
 
-// @todo: have Q4 inherit from 'shell element' in order to maximize code reuse
+// TODO: have Q4 inherit from 'shell element' in order to maximize code reuse
 
 /**
- * Calculate the element body force
+ * Calculate the element body force, mutator
  * 
  * @param [vec&] bodyForce Body force vector
  * @return void
  */
-void Q4::bodyForce(vec &bodyForce)
+void Q4::mbodyForce(vec &bodyForce)
 {
     assert(bodyForce.n_rows == Q4__DOF_PER_NODE*Q4__NUM_NODES);
-    // @todo make zeros at or not at the beg of function consistent across functions
+    // TODO make zeros at or not at the beg of function consistent across functions
     bodyForce.zeros();
     unsigned int i, j;
     double xi, eta, weightX, weightY;
@@ -215,14 +220,14 @@ void Q4::bodyForce(vec &bodyForce)
     bodyForce *= h;
 }
 
-//@todo: fix this function
+//TODO: fix this function
 /**
- * Calculates the traction for a surface
+ * Calculates the traction for a surface, mutator
  * 
  * @param [vec&] traction Traction force vector
  * @return void
  */
-void Q4::traction(vec &traction) 
+void Q4::mtraction(vec &traction) 
 {
     traction.zeros();
     unsigned int i, j;
@@ -249,13 +254,13 @@ void Q4::traction(vec &traction)
 #define Q4__STRAIN_COMP 3
 
 /**
- * Calculates the stiffness matrix for the element
+ * Calculates the stiffness matrix for the element, mutator
  * 
  * @param [mat*] stiff Element stiffness matrix
  * @param [PlaneState] pState Plane state control
  * @return void
  */
-void Q4::stiffness(mat &stiff, int pState = PSTRESS) 
+void Q4::mstiffness(mat &stiff, int pState = PSTRESS) 
 {
     assert(stiff.n_rows == Q4__DOF_PER_NODE*Q4__NUM_NODES);
     assert(stiff.n_cols == Q4__DOF_PER_NODE*Q4__NUM_NODES);
@@ -278,7 +283,7 @@ void Q4::stiffness(mat &stiff, int pState = PSTRESS)
     mat B(Q4__STRAIN_COMP,Q4__DOF_PER_NODE*Q4__NUM_NODES);
     mat C(Q4__STRAIN_COMP,Q4__STRAIN_COMP);
     
-    // @todo: separate this logic and material properties from element so that the C matrix will not need calculated a billion times
+    // TODO: separate this logic and material properties from element so that the C matrix will not need calculated a billion times
     // PROB AN EXPENSIVE OPERATION, DO SOMETHING ABOUT THIS
     switch (pState)
     {
@@ -295,7 +300,7 @@ void Q4::stiffness(mat &stiff, int pState = PSTRESS)
             C *= E/((1-v)*(1-2*v));
             break;
         default:
-            // @todo: IDK, FIX THIS I GUESS
+            // TODO: IDK, FIX THIS I GUESS
             cout << "Cannot understand plane state" << endl;
             assert(0);
     }
@@ -354,3 +359,5 @@ void Q4::stiffness(mat &stiff, int pState = PSTRESS)
     }
     stiff *= h;
 }
+
+//TODO implement Q4R element
