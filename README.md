@@ -14,7 +14,7 @@ mkdir build
 cd build
 cmake ../src
 make
-bin/odem-sim path/to/input_file.json path/to/results.db
+bin/helwfem
 ```
 
 ### Windows
