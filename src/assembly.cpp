@@ -9,8 +9,8 @@
 using namespace arma;
 using namespace std;
 
-//TODO work with linked lists instead of C-style arrays
-// this will be easier for memory management
+/*TODO work with linked lists instead of C-style arrays
+ *       this will be easier for memory management */
 
 /**
  * Assembles the global stiffness matrix given an array of elements, mutator
@@ -28,8 +28,8 @@ void mglobalStiffness(mat &kg, MechElem **elems, unsigned int numElements,
     //assert(kg.n_cols == dofPerElem);
     //assert(kg.n_rows == dofPerElem);
     /*
-     * TODO reach a consistency where matrices passed by reference are either \
-     * assumed to be zeroed before being passed or are zeroed on pass
+     * TODO reach a consistency where matrices passed by reference are either
+     *      assumed to be zeroed before being passed or are zeroed on pass
      */
     kg.zeros();
     int *gdofs;

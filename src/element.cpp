@@ -12,6 +12,7 @@ using namespace arma;
 // TODO convert c style arrays to c++ arrays
 // TODO separate material data from mesh data
 // TODO convert for loops to ranged loops
+// TODO delegate integration to a separate "Integration" class
 
 /**
  * Default constructor for a mechanical finite element
@@ -109,16 +110,6 @@ Q4::Q4(long long int E, double v, double h, vec *pb, vec *pt, int *gnodes,
     mat *pgcoords, int *gdofs) : MechElem(E, v, pb, pt, gnodes, pgcoords, 
     gdofs), h(h) {};
 
-/**
- * Clone of a Q4 finite element
- * 
- * @param [int] 
- * @return Q4
- */
- /*
-Q4::Q4(const Q4& orig) 
-{
-}*/
 
 /**
  * Deallocation of a Q4 finite element
@@ -283,7 +274,8 @@ void Q4::mstiffness(mat &stiff, int pState = PSTRESS)
     mat B(Q4__STRAIN_COMP,Q4__DOF_PER_NODE*Q4__NUM_NODES);
     mat C(Q4__STRAIN_COMP,Q4__STRAIN_COMP);
     
-    // TODO: separate this logic and material properties from element so that the C matrix will not need calculated a billion times
+    /* TODO: separate this logic and material properties from element so that 
+     *          the C matrix will not need calculated a billion times */
     // PROB AN EXPENSIVE OPERATION, DO SOMETHING ABOUT THIS
     switch (pState)
     {
