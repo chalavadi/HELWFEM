@@ -33,7 +33,11 @@ void mimposeBoundaryConds(mat &kg, vec &fg, const std::list<BC*> &bounds)
             kg(i, bc->dof) = 0;
             kg(bc->dof, i) = 0;
         }
-        /* modify force vector with known displacements */
-        fg(bc->dof) = bc->val;
     }
+    
+    for (auto bc: bounds)
+    /* modify force vector with known displacements
+     * this is done after original loop to ensure none of the EBCs are
+     *      over written */
+        fg(bc->dof) = bc->val;
 }
